@@ -1,0 +1,21 @@
+# Zero Trust: Micro-segmentation Policy
+# Purpose: Deny all ingress traffic to the Data Layer unless from the API Namespace.
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: data-layer-isolation
+  namespace: production-data
+spec:
+  podSelector:
+    matchLabels:
+      tier: database
+  policyTypes:
+  - Ingress
+  ingress:
+  - from:
+    - namespaceSelector:
+        matchLabels:
+          name: production-api
+    ports:
+    - protocol: TCP
+      port: 5432
